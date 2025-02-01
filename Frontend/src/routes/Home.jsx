@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { MdOutlineArrowOutward } from "react-icons/md";
 import MainCategories from '../components/MainCategories';
 import FeaturedPosts from '../components/FeaturedPosts';
-import PostList from '../components/PostList';
+import PostList from '../components/PostLists';
 
 function Home() {
   return (
@@ -40,7 +40,7 @@ function Home() {
 
       {/* post list */}
       <div>
-        <h1 className='my-4 text-2xl text-gray-600'>Recent Posts</h1>
+        <h1 class="text-2xl font-semibold mt-16 mb-4 text-gray-800 capitalize lg:text-3xl dark:text-white">Recent Posts</h1>
         <PostList />
       </div>
 

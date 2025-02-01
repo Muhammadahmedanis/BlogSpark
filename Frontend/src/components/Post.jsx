@@ -1,27 +1,41 @@
-import React from 'react'
-import ImageKit from '../utils/imageKit'
-import { Link } from 'react-router-dom'
+import React from "react";
+import { Link } from "react-router-dom";
+import ImageKit from "../utils/imageKit";
 
-function Post() {
+const BlogSection = () => {
   return (
-    <div className='flex flex-col xl:flex-row gap-8'>
-        <div className='md:hidden xl:block xl:w-1/3'>
-            <ImageKit src="deisgn.jpeg" className='rounded-2xl object-cover' width='735' />
-        </div>
-        <div className='flex flex-col gap-4 xl:w-2/3'>
-            <Link to='/' className='text-2xl font-semibold'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque sit Lorem ipsum dolor sit amet</Link>
-            <div className='flex items-center gap-2 text-gray-400 text-sm'>
-                <span>Written by</span>
-                <Link className='text-blue-800'>John Doe</Link>
-                <span>on</span>
-                <Link className='text-blue-800'>Web Design</Link>
-                <span>2 days ago</span>
-            </div>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi dicta nostrum natus earum esse assumenda voluptate nihil. Molestiae praesentium sed atque itaque deserunt ut, illo corporis facilis sapiente consequatur. Quo!</p>
-            <Link to='/test' className='underline text-sm text-blue-800 '>Read More</Link>
-        </div>
-    </div>
-  )
-}
+      <div className="container mx-auto">
+        <div className="mt-2 lg:-mx-6 lg:flex lg:items-center">
+          <ImageKit src="deisgn.jpeg"  className="object-cover w-full lg:mx-6 lg:w-1/2 rounded-xl h-52 lg:h-64" />
+          <div className="mt-6 lg:w-1/2 lg:mt-0 lg:mx-6">
+            {/* <p className="text-sm text-blue-500 uppercase">category</p> */}
+            <p className="block mt-4 text-2xl font-semibold text-gray-800 hover:underline dark:text-white">
+              All the features you want to know
+            </p>
+            <p className="mt-3 text-sm text-gray-500 dark:text-gray-300 md:text-sm">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure veritatis sint autem nesciunt,
+              laudantium quia tempore delect
+            </p>
 
-export default Post
+            <Link to='/test' className="inline-block mt-2 text-blue-500 underline hover:text-blue-400">
+              Read more
+            </Link>
+
+            <div className="flex items-center mt-6">
+              <img
+                className="object-cover object-center w-10 h-10 rounded-full"
+                src="https://images.unsplash.com/photo-1531590878845-12627191e687?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
+                alt="Author"
+              />
+
+              <div className="mx-4">
+                <h1 className="text-sm text-gray-700 dark:text-gray-200">Amelia Anderson</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  );
+};
+
+export default BlogSection;

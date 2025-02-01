@@ -39,7 +39,7 @@ function Nvabar() {
   }
 
   return (
-    <div className={isOpen ? '' : 'w-full bg-[#b3b3e6] sticky top-0 z-10 drop-shadow-md '}>
+    <div className={isOpen ? '' : 'w-full bg-[#b6b6ef] sticky top-0 z-10 drop-shadow-md '}>
       <div className='flex flex-wrap justify-between place-items-center px-2 py-3 pl-5 pr-4 dark:bg-gray-900 dark:text-white'>
         <div className='sm:hidden'>
           { isOpen ? '' : <FaBars onClick={() => setIsOpen(!isOpen)} />}
