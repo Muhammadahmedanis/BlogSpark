@@ -45,7 +45,7 @@ function Nvabar() {
           { isOpen ? '' : <FaBars onClick={() => setIsOpen(!isOpen)} />}
         </div>
         <div className="flex gap-2 items-center">
-          <ImageKit height={20} width={30} src='logo.png' alt="logo" />
+          <ImageKit src='logo.png' alt="logo" className="h-[35px] w-[40px]" />
           <Link to='/' className='font-bold text-2xl'>
             Blog <span className='text-gray-100'>Spark</span>
           </Link>
@@ -85,29 +85,36 @@ function Nvabar() {
           </ul>
         </div>
 
-        <div className='padding: 10px flex items-center gap-x-2'>
-          <button onClick={() => setOpenModal(!openModal)} type="button" className="relative size-11 cursor-pointer font-bold text-[22px] rounded-full flex items-center justify-center bg-gray-100 text-sm focus:outline-none focus:ring-white">
-               {user.slice(0, 1).toUpperCase() || "A"}
-          </button>
-          <div className={` ${openModal ? "block" : "hidden"} absolute right-1  top-14 z-10 mt-1 w-[132px] origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none`}>
-          <button onClick={handleTheme}
-            className="flex items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700">
-            {"theme"}
-            { "theme" == "light" ? <IoSunnyOutline className="font-bold w-12" size={23} />  :  <IoSunny className="font-bold w-12" size={23}/> }      
-          </button>
-          <button onClick={handleLogout}
-            className="flex items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700">
-            Login
-            <SiSimplelogin className="font-bold w-12" size={23} />
-            {/* <RiLogoutCircleRLine className="font-bold w-9" size={19} /> */}
-          </button>
-          {user.admin && <button
-            className="flex flex-1 items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700">
-              <Link to="/dashboard">Dashboard</Link>
-            <MdOutlineDashboard className="font-bold w-9" size={19} />
-          </button>}
-          </div>
-        </div>
+        { !user ?
+          ( <div className='padding: 10px flex items-center gap-x-2'>
+            <button onClick={() => setOpenModal(!openModal)} type="button" className="relative size-11 cursor-pointer font-bold text-[22px] rounded-full flex items-center justify-center bg-gray-100 text-sm focus:outline-none focus:ring-white">
+                {user.slice(0, 1).toUpperCase() || "A"}
+            </button>
+            <div className={` ${openModal ? "block" : "hidden"} absolute right-1  top-14 z-10 mt-1 w-[132px] origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none`}>
+            <button onClick={handleTheme}
+              className="flex items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700">
+              {"theme"}
+              { "theme" == "light" ? <IoSunnyOutline className="font-bold w-12" size={23} />  :  <IoSunny className="font-bold w-12" size={23}/> }      
+            </button>
+            <button onClick={handleLogout}
+              className="flex items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700">
+              Log Out
+              {/* <SiSimplelogin className="font-bold w-12" size={23} /> */}
+              <RiLogoutCircleRLine className="font-bold w-9" size={19} />
+            </button>
+            {user.admin && <button
+              className="flex flex-1 items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700">
+                <Link to="/dashboard">Dashboard</Link>
+              <MdOutlineDashboard className="font-bold w-9" size={19} />
+            </button>}
+            </div>
+          </div> ) :
+          ( 
+            <Link to='/signup'>
+              <button className="cursor-pointer whitespace-nowrap rounded-lg bg-[#7f75dd] hover:bg-[#a09de8] px-5 py-2.5 text-sm font-medium text-white shadow-smfocus:ring-indigo-300 focus-visible:outline-none focus-visible:ring transition-colors duration-150">Sign In</button>
+            </Link>
+          )
+        }
       </div>
     </div>
   )
