@@ -15,7 +15,7 @@ app.use(cors({
   origin: [process.env.ALLOWED_ORIGIN_1, process.env.ALLOWED_ORIGIN_2], // Array of allowed origins
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"]
 }));
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
@@ -23,6 +23,7 @@ app.use(express.static("public"));
 app.use(cookieParser());
 // app.use(mongoSanitize());
 // app.use(helmet());
+
 
 // Routes
 app.use("/api/v1/auth", authRouter);

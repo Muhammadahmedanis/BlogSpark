@@ -78,8 +78,71 @@ export const signup = asyncHandler( async (req, res) => {
     const options = {
         httpOnly: true,
         secure: true,
+        sameSite: "none",
     }
-    console.log("OK4");
+        
+    return res
+    .status(StatusCodes.CREATED)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .send(new ApiResponse(StatusCodes.OK, 
+        SUCCESS_REGISTRATION,
+        {user: createdUser, accessToken, refreshToken},
+    ))
+    
+})
+
+
+
+
+// @desc    SIGNUP
+// @route   POST /api/v1/auth/signup
+// @access  Public
+
+export const googleSignup = asyncHandler( async (req, res) => {
+    
+    const { userName, email, password, isVerified } = req.body;
+
+    // Validate required fields
+    if ([userName, email, password, isVerified].some((field) => typeof field !== "string" || field.trim() === "")) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, MISSING_FIELDS);
+    }
+    console.log(req.body);
+    
+    // Check if the user already exists
+    const isUserExist = await User.findOne({ $or: [{ userName }, { email }] });
+    if (isUserExist) {
+        throw new ApiError(StatusCodes.CONFLICT, USER_EXISTS);
+    };
+
+    if(!isVerified){
+        throw new ApiError(StatusCodes.OK, NOT_VERIFY);
+    }
+    
+    // Create the user
+    const user = await User.create({
+        userName: userName.toLowerCase(),
+        email,
+        password,
+        isVerified,
+    });
+    
+    
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
+        
+    // Retrieve the created user without sensitive fields
+    const createdUser = await User.findById(user._id).select("-password -refreshToken");
+    console.log(createdUser);
+    
+    if (!createdUser) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, NO_USER);
+    }
+    // Respond with success
+    const options = {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+    }
         
     return res
     .status(StatusCodes.CREATED)
@@ -141,6 +204,8 @@ export const resendOtp = asyncHandler( async (req, res) => {
 // @access  Private
 
 export const verifyEmail = asyncHandler(async (req, res) => {
+        console.log(req.body);
+        
         const { otp } = req.body;
         
         // Validate the input
@@ -168,7 +233,8 @@ export const verifyEmail = asyncHandler(async (req, res) => {
         }
 
         // Check OTP expiration
-        if (user.expiresIn < Date.now()) {
+        const EXPIRE_TIME = 10 * 60 * 1000; // 10 minutes in milliseconds
+        if (user.createdAt + EXPIRE_TIME < Date.now()) {
             return res
                 .status(StatusCodes.FORBIDDEN)
                 .send(new ApiError(StatusCodes.FORBIDDEN, OTP_EXPIRED));
@@ -255,7 +321,7 @@ export const logout = asyncHandler(async (req, res) => {
     res
     .status(StatusCodes.OK)
     .clearCookie("accessToken", options)
-    .clearCookie("refreshTokn", options)
+    .clearCookie("refreshToken", options)
     .send(new ApiResponse(StatusCodes.OK,  SUCCESS_LOGOUT, {}));
 })
 

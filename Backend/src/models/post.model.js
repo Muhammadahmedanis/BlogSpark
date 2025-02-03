@@ -8,6 +8,7 @@ const postSchema = new mongoose.Schema({
     },
     img: {
         type: String,
+        required: true,
     },
     title:{
         type: String,
@@ -15,11 +16,14 @@ const postSchema = new mongoose.Schema({
     },
     slug: {
         type: String,
-        required: true,
         unique: true,
     },
     desc:{
         type: String,
+    },
+    category:{
+        type: String,
+        default: "general",
     },
     content: {
         type: String,

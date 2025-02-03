@@ -29,9 +29,9 @@ const userSchema = new mongoose.Schema({
         type: [String],
         default: [],
     },
-    isAdmin: {
-        type: Boolean,
-        default: false,
+    role: {
+        type: String,
+        default: "user",
     },
     otp: {
         type: String,
