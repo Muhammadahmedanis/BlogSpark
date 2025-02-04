@@ -12,7 +12,7 @@ export const responseMessages = {
 
     ERROR_MESSAGES: 'Internal Server Error',
     EMAIL_VERIFY: "Email Verified Successfully",
-    EMPTY_PARAMS: "Params is empty",
+    EMPTY_URL_PARAMS: "Slug not found",
     
     GET_SUCCESS_MESSAGES: 'Got Resource Successfully',
     GET_UNSUCCESS_MESSAGES: 'No resource found',
@@ -33,7 +33,7 @@ export const responseMessages = {
     
     NO_USER_FOUND: "Email doesn't exists",
     NO_USER: 'No User found',
-    NO_DATA_FOUND: "No data provided",    
+    NO_DATA_FOUND: "No data found",    
     NOT_VERIFY: 'Email is not verified',
     
     OTP_EXPIRED: 'OTP has expired. Please request a new OTP',

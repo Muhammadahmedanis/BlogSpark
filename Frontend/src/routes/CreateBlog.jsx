@@ -4,9 +4,7 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useApi } from '../helper/useApi';
 import { useNavigate } from 'react-router-dom';
-import { axiosInstance } from '../api/axios';
-import { IKContext, IKUpload } from 'imagekitio-react';
-import { toast } from 'react-toastify';
+import Upload from '../components/upload';
 
 function CreateBlog() {
   const navigate = useNavigate();
@@ -19,61 +17,33 @@ function CreateBlog() {
       return await useApi("post", "/post/create", newPost);
     },
     onSuccess: (res) => {
+      console.log(res);
       navigate(`/${res.data.slug}`);
     }
   })
-
-  const authenticator =  async () => {
-    try {
-        const response = await axiosInstance.get("/post/upload-auth");
-        
-        if (!response.status == 200) {
-            const errorText = await response.statusText();
-            throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-        }
-
-        const data = await response.data;
-        console.log(data);
-        
-        const { signature, expire, token } = data;
-        return { signature, expire, token };
-    } catch (error) {
-        throw new Error(`Authentication request failed: ${error.message}`);
-    }
-};
-
+  
   const[user, submitAction, isPending] = useActionState(async (previousState, formData) => {
     const payload = {
       title: formData?.get("title"),
       content:  formData?.get("content"),
       category: formData?.get("category"),
-      img: formData?.get("img").name,
+      img: cover?.filePath || "",
       desc: value,
     }
     console.log(payload);
     mutation.mutate(payload);
+    setCover("");
   })
-
-
-  
 
   return (
     <>
     <div className='flex flex-col gap-4'>
+      {/* <h1 className='text-cl font-light mt-10'>Create a New Post</h1> */}
+        <Upload type="image" setProgres={setProgres} setData={setCover}>
+          <img className='p-2 shadow-md text-sm h-28 w-40 mt-2 text-gray-500 object-cover bg-gray-100 rounded-xl' src={ cover.url ?  cover.url : "https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg"} />  
+        </Upload>   
       <form action={submitAction} className="flex flex-col gap-4 flex-1 mb-6">
-      <IKContext 
-        publicKey={import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY} 
-        urlEndpoint={import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT} 
-        authenticator={authenticator} 
-      >
-        <IKUpload
-          useUniqueFileName
-          onError={onError}
-          onSuccess={onSuccess}
-          onUploadProgress={onUploadProgress}
-        />
-      </IKContext>
-          <input type="text" name='title' placeholder='My Awsome Story' className='bg-transparent text-xl border p-2 w-fit rounded font-semibold outline-none'/>
+        <input type="text" name='title' placeholder='My Awsome Story' className='bg-transparent text-xl border p-2 w-fit rounded font-semibold outline-none'/>
         <div className='flex items-center gap-4'>
           <label className='text-sm'>Choose a category:</label>
           <select className="bg-white border-none outline-none p-2 rounded-xl shadow-md" name="category">

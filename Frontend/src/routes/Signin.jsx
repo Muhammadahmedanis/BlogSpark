@@ -48,7 +48,7 @@ const Signin = () => {
          const data = await useApi("post", "auth/signin", payload);
          console.log(data);
          if(data){
-          const userInfo = {name: data.user.userName, role: data.user.role};
+          const userInfo = {name: data.data.user.userName, role: data.data.user.role};
            dispatch(signinSuccess(userInfo));
            navigate("/");
          }else{

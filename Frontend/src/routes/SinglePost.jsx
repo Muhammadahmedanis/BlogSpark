@@ -1,29 +1,50 @@
 import React from 'react'
 import ImageKit from '../utils/imageKit'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { FaFacebook } from "react-icons/fa6";
 import { GrInstagram } from "react-icons/gr";
 import PostMenuAction from '../components/PostMenuAction';
 import Search from '../components/Search';
 import Comments from '../components/comments';
+import { useQuery } from "@tanstack/react-query";
+import {format} from "timeago.js";
+import { useApi } from '../helper/useApi';
+
+const fetchPosts = async(slug) => {
+  const res = await useApi("get", `/post/${slug}`);
+  return res?.data;
+}
 
 function SinglePost() {
+  const { slug } = useParams();
+  const {isPending, error, data} = useQuery({
+    queryKey: ["post", slug],
+    queryFn: () => fetchPosts(slug),
+  })
+
+  if (isPending) return <div className='flex gap-2 items-center justify-center'><p className='text-[23px] font-semibold'>Loading</p> <img src="https://img.icons8.com/?size=100&id=I2EAeOMEYXQj&format=png&color=000000" /> </div>;
+  if(error) return error.message;
+  if(!data) return "Post not found!";
+  // console.log(data);
+  
+
   return (
     <div className='flex flex-col gap-8'>
       <div className='flex gap-8'>
         <div className='lg:w-3/5 flex flex-col gap-8'>
-          <h1 className='text-xl md:text3xl xl:text-3xl 2xl:text-4xl font-semibold'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui, harum fugiat eos provident</h1>
+          <h1 className='text-xl md:text3xl xl:text-3xl 2xl:text-4xl font-semibold'>{data?.title}</h1>
           <div className='flex items-center gap-2 text-gray-400 text-sm'>
             <span>Written By</span>
-            <Link className='text-blue-800'>John Doe</Link>
+            <Link className='text-blue-800'>{data?.user?.userName.charAt(0).toUpperCase() + data?.user?.userName?.slice(1)}</Link>
             <span>on</span>
-            <Link className='text-blue-800'>Web Design</Link>
-            <span>2 days ago</span>
+            <Link className='text-blue-800'>{data?.category}</Link>
+            <span>{format(data?.createdAt)}</span>
+            
           </div>
-          <p className='text-gray-500 font-medium '>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Laborum et eos corrupti deserunt ducimus a impedit unde inventore optio, iure neque commodi eveniet voluptate maxime explicabo. Atque ratione hic magnam?</p>
+          <p className='text-gray-500 font-medium'>{data?.content}</p>
         </div>
-        <div className='hidden lg:block w-2/5'>
-          <ImageKit src='deisgn.jpeg' width='600' className='rounded-2xl'/>
+        <div className='hidden lg:block w-2/6'>
+          { data?.img && <ImageKit src={data.img} width='500' height='300' className='rounded-2xl'/>}
         </div>
       </div>
 
@@ -45,7 +66,7 @@ function SinglePost() {
           <div className='flex flex-col gap-4'>
             <div className='flex gap-4 items-center'>
               <ImageKit src="default-image.jpg" className='w-12 h-12 rounded-full object-cover' width='48' height='48' />
-              <Link className='text-blue-800'>John Doe</Link>
+              <Link className='text-blue-800'>{data?.user?.userName.charAt(0).toUpperCase() + data?.user?.userName?.slice(1)}</Link>
             </div>
             <p className='text-sm text-gray-500'>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
             <div className='flex gap-2'>
@@ -53,7 +74,7 @@ function SinglePost() {
               <Link> <GrInstagram size={25} className='text-pink-600' /> </Link>
             </div>
           </div>
-          <PostMenuAction />
+          <PostMenuAction post={data} />
           <h1 className='mt-6 mb-3 text-sm font-medium'>Categories</h1>
           <div className='flex flex-col gap-2 text-sm '>
             <Link className='underline' to='/'>All</Link>
@@ -67,7 +88,7 @@ function SinglePost() {
         </div>
       </div>
 
-    <Comments />
+    <Comments postId={data._id} />
     </div>
   )
 }
