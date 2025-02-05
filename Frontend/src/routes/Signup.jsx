@@ -9,7 +9,7 @@ import { toast } from "react-toastify"
 import { useApi } from "../helper/useApi";
 import { useDispatch } from "react-redux";
 import { signupFailed, signupSuccess } from "../redux/userSlice";
-import { useGoogleOneTapLogin } from '@react-oauth/google';
+// import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 const Signup = () => {
   const[passIcon, setPassIcon] = useState("password");

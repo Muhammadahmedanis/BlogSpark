@@ -9,6 +9,7 @@ import Comments from '../components/comments';
 import { useQuery } from "@tanstack/react-query";
 import {format} from "timeago.js";
 import { useApi } from '../helper/useApi';
+import Loader from '../components/Loader';
 
 const fetchPosts = async(slug) => {
   const res = await useApi("get", `/post/${slug}`);

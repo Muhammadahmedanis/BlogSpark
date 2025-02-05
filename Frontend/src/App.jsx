@@ -11,6 +11,8 @@ import Signin from './routes/Signin.jsx';
 import Otp from './routes/Otp.jsx';
 import Layout from './layout/Layout.jsx';
 import { useSelector } from 'react-redux';
+import Dashboard from './Admin/routes/Dashboard.jsx';
+import Blogs from './Admin/routes/blogs.jsx';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useSelector((state) => state.auth);
@@ -23,25 +25,41 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-function App() {
+const ProtectedRouteAdmin = ({ children }) => {
+  const { user } = useSelector((state) => state.auth);
+  
+  // Redirect if user is not admin
+  if (user?.role !== "admin") {
+    return <Navigate to="/" replace />;
+  }
 
+  return children;
+};
+
+function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path='/' element={ <Layout />} >
-        <Route path='/signup' element={ <Signup /> } />
-        <Route path='/signin' element={ <Signin /> } />
-        <Route path='/otp' element={<Otp />} />
-        
-        <Route path='/' element={ <ProtectedRoute> <Home /> </ProtectedRoute> } />
+      <>
+        <Route path='/' element={ <Layout />}>
+          <Route path='/signup' element={ <Signup /> } />
+          <Route path='/signin' element={ <Signin /> } />
+          <Route path='/otp' element={<Otp />} />
+          
+          <Route path='/' element={ <ProtectedRoute> <Home /> </ProtectedRoute> } />
 
-        <Route path='/posts' element={ <PostList /> } />
-        <Route path='/:slug' element={ <ProtectedRoute> <SinglePost /> </ProtectedRoute> } />
-        <Route path='/write' element={ <ProtectedRoute> <CreateBlog /> </ProtectedRoute> } />
-      </Route>
+          <Route path='/posts' element={ <PostList /> } />
+          <Route path='/:slug' element={ <ProtectedRoute> <SinglePost /> </ProtectedRoute> } />
+          <Route path='/write' element={ <ProtectedRoute> <CreateBlog /> </ProtectedRoute> } />
+
+          <Route path='/dashboard' element={<ProtectedRouteAdmin> <Dashboard /> </ProtectedRouteAdmin>} />
+          <Route path='/blogs' element={<ProtectedRouteAdmin> <Blogs />  </ProtectedRouteAdmin>} />
+        </Route>
+
+      </>
     )
   );
 
   return <RouterProvider router={router} />
 }
 
-export default App
+export default App;

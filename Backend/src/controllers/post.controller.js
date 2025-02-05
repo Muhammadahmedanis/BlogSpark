@@ -180,12 +180,6 @@ export const featuredPost =  asyncHandler(async (req, res) => {
         throw new ApiError(StatusCodes.BAD_REQUEST, UPDATE_UNSUCCESS_MESSAGES);
     };
 
-    // const isIdExist = await Post.findById(userId).populate("user");
-    // console.log(isIdExist.user.role);
-    // if(!isIdExist){
-    //     throw new ApiError(StatusCodes.BAD_REQUEST, GET_UNSUCCESS_MESSAGES);
-    // };
-
     if(role !== "user"){
         throw new ApiError(StatusCodes.BAD_REQUEST, ADMIN_ACCESS);
     };
@@ -204,3 +198,23 @@ export const featuredPost =  asyncHandler(async (req, res) => {
 
     return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, isFeatured ?  DELETED_SUCCESS_MESSAGES : ADD_SUCCESS_MESSAGES , updatedPost));
 })
+
+
+
+// @desc    GET
+// @route   GET /api/v1/post/
+// @access  Admin
+
+export const AllPost = asyncHandler(async (req, res) => {
+    const { role } = req.user;
+    if(!role && role !== "admin"){
+        throw new ApiError(StatusCodes.BAD_REQUEST, ADMIN_ACCESS);
+    };
+    
+    const getPost = await Post.find();
+    
+    if (!getPost) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, NO_USER);
+    }
+    return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, "", getPost));
+});

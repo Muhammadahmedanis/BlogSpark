@@ -2,7 +2,7 @@ import { User } from "../models/user.model.js";
 import { StatusCodes } from "http-status-codes";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { responseMessages } from "../constant/responseMessages.js";
-const { UNAUTHORIZED_REQUEST, UPDATE_UNSUCCESS_MESSAGES, ADD_UNSUCCESS_MESSAGES, ADD_SUCCESS_MESSAGES, NO_USER } = responseMessages
+const { UNAUTHORIZED_REQUEST, UPDATE_UNSUCCESS_MESSAGES, ADD_UNSUCCESS_MESSAGES, UPDATE_SUCCESS_MESSAGES, ADD_SUCCESS_MESSAGES, NO_USER, ADMIN_ACCESS } = responseMessages
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
@@ -60,4 +60,83 @@ export const saveUserPost = asyncHandler(async (req, res) => {
     };
 
     return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, isSaved ?  ADD_UNSUCCESS_MESSAGES : ADD_SUCCESS_MESSAGES ))
+})
+
+
+
+// @desc    GET
+// @route   GET /api/v1/user/
+// @access  Admin
+
+export const getAlluser = asyncHandler(async (req, res) => {
+    const { role } = req.user;
+    if(!role && role !== "admin"){
+        throw new ApiError(StatusCodes.BAD_REQUEST, ADMIN_ACCESS);
+    };
+
+    const getUser = await User.find();
+    if (!getUser) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, NO_USER);
+    }
+    return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, "", getUser));
+});
+
+
+
+
+// @desc    PUT
+// @route   put /api/v1/admin/updateUser/:id
+// @access  Admin
+
+export const updateUser = asyncHandler(async (req, res) => {
+    const { role } = req.user;
+    if(!role && role !== "admin"){
+        throw new ApiError(StatusCodes.BAD_REQUEST, ADMIN_ACCESS);
+    };
+
+    const { userId } = req.params;
+    if(!userId){
+        return new ApiError(StatusCodes.BAD_REQUEST, UPDATE_SUCCESS_MESSAGES);
+    };
+
+    if(Object.keys(req.body).length === 0){
+        throw new ApiError(StatusCodes.BAD_REQUEST, NO_DATA_FOUND)
+    }
+
+    const isUser = await User.findByIdAndUpdate(userId,
+        { $set: req.body }, 
+        { new: true, runValidators: true  }
+    );
+    if(!isUser){
+        throw new ApiError(StatusCodes.BAD_REQUEST, NO_USER);
+    }
+    console.log(isUser);
+
+    return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, UPDATE_SUCCESS_MESSAGES));
+})
+
+
+
+// @desc    DELETE
+// @route   DELETE /api/v1/admin/delete/
+// @access  Admin
+
+export const deleteUser = asyncHandler(async (req, res) => {
+    const { role } = req.user;
+    if(!role && role !== "admin"){
+        throw new ApiError(StatusCodes.BAD_REQUEST, ADMIN_ACCESS);
+    };
+
+    const { userId } = req.params;
+
+    if(!userId){
+        return new ApiError(StatusCodes.BAD_REQUEST, UPDATE_UNSUCCESS_MESSAGES);
+    };
+
+    const isUser = await User.findByIdAndDelete(userId);
+    if(!isUser){
+        throw new ApiError(StatusCodes.BAD_REQUEST, NO_USER);
+    };
+
+    return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, DELETED_SUCCESS_MESSAGES));
 })
