@@ -16,6 +16,7 @@ function PostMenuAction({post}) {
 
   const {isPending, error, data: savedPosts} = useQuery({
     queryKey: ["savedPost"],
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       const res = await useApi("get", "/user/saved");
       return res?.data;

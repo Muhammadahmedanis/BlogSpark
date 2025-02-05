@@ -2,7 +2,6 @@ import { Router } from "express";
 import { createPost, deletePost, featuredPost, getPost, getPosts, uploadAuth } from "../controllers/post.controller.js";
 import { verifyJwt } from "../middlwares/auth.middleware.js";
 import { createRateLimiter } from "../middlwares/rate-limiting.middleware.js";
-import { upload } from "../middlwares/multer.middleware.js";
 
 const postRouter = Router();
 postRouter.route("/upload-auth").get(uploadAuth)

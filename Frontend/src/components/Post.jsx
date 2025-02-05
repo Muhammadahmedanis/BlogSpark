@@ -4,6 +4,7 @@ import ImageKit from "../utils/imageKit";
 import { format } from "timeago.js"
 
 const BlogSection = ({post}) => {
+  
   return (
       <div className="container mx-auto flex flex-col xl:flex-row mb-2 overflow-x-hidden">
         <div className="mt-2 lg:-mx-6 lg:flex lg:items-center">
@@ -15,7 +16,7 @@ const BlogSection = ({post}) => {
             </Link>
             <div className="flex items-center gap-2 mt-1 text-gray-400 text-sm">
               <span>Written by</span>
-              <Link className="text-blue-800">{post?.user?.userName?.charAt(0).toUpperCase() + post?.user?.userName?.slice(1)}</Link>
+              <Link className="text-blue-800" to={`/posts?author=${post?.user?.userName}`}>{post?.user?.userName?.charAt(0).toUpperCase() + post?.user?.userName?.slice(1)}</Link>
               <span>on</span>
               <Link className="text-blue-800">{post?.category}</Link>
               <span>{format(post?.createdAt)}</span>

@@ -1,11 +1,12 @@
 import { Post } from "../models/post.model.js";
+import { User } from "../models/user.model.js";
 import { StatusCodes } from "http-status-codes";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import ImageKit from "imagekit";
 import { responseMessages } from "../constant/responseMessages.js";
-const { GET_UNSUCCESS_MESSAGES, UPDATE_UNSUCCESS_MESSAGES, EMPTY_URL_PARAMS, MISSING_FIELDS, CREATE_SUCCESS_MESSAGES, DUPLICATE_SLUG, DELETED_SUCCESS_MESSAGES, UNAUTHORIZED_REQUEST, ADMIN_ACCESS, ADD_SUCCESS_MESSAGES, NO_DATA_FOUND, UPDATE_SUCCESS_MESSAGES} = responseMessages;
+const { GET_UNSUCCESS_MESSAGES, UPDATE_UNSUCCESS_MESSAGES, EMPTY_URL_PARAMS, MISSING_FIELDS, CREATE_SUCCESS_MESSAGES, DUPLICATE_SLUG, DELETED_SUCCESS_MESSAGES, UNAUTHORIZED_REQUEST, ADMIN_ACCESS, ADD_SUCCESS_MESSAGES, NO_DATA_FOUND, NO_USER} = responseMessages;
 
 // @desc    CREATEPOST
 // @route   POST /api/v1/post/create
@@ -55,11 +56,68 @@ export const uploadAuth = async (req, res) => {
 export const getPosts = asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 2;
-    
+
+    // Queries
+    const query = {};
+
+    const category = req.query.cat;
+    const author = req.query.author;
+    const searchQuery = req.query.search;
+    const sortQuery = req.query.sort;
+    const featuredPost = req.query.featuredPost;
+
+    if(category){
+        query.category = category;
+    };
+    if (searchQuery) {
+        query.title = {$regex:searchQuery, $options: "i"};
+    };
+    if (author) {
+        const user = await User.findOne({userName: author}).select("_id");
+        if (!user) {
+            throw new ApiError(StatusCodes.NOT_FOUND, NO_USER);
+        };
+
+        query.user = user._id;
+    };
+
+        let sortObj = { createdAt: -1 };
+        if (sortQuery) {
+            switch (sortQuery) {
+                case "newest":
+                    sortObj = { createdAt: -1 };
+                    break;
+                case "oldest":
+                    sortObj = { createdAt: 1 };
+                    break;
+                case "popular":
+                    sortObj = { visit: -1 };
+                    break; 
+                case "trending":
+                    sortObj = { visit: -1 };
+                    query.createdAt = {
+                        $gte: new Date(new Date().getTime() - 7 * 24 * 3600 * 1000),
+                    };
+                    break;
+                default:
+                    break;
+            }
+        }
+
     const totalPosts = await Post.countDocuments();
     const hasMore = page * limit < totalPosts;
+
+    if (featuredPost) {
+        query.isFeatured = true
+    }
     
-    const posts = await Post.find().populate("user", "userName").limit(limit).skip( (page - 1) * limit );
+    const posts = await Post.find(query)
+    .populate("user", "userName")
+    .sort(sortObj) 
+    .limit(limit)
+    .skip((page - 1) * limit)
+    .lean();
+    
     if(!posts){
         throw new ApiError(StatusCodes.BAD_REQUEST, GET_UNSUCCESS_MESSAGES);
     };
@@ -78,7 +136,7 @@ export const getPost = asyncHandler(async (req, res) => {
         throw new ApiError(StatusCodes.BAD_REQUEST, EMPTY_URL_PARAMS);
     };
 
-    const post = await Post.findOne({ slug }).populate("user", "userName img");
+    const post = await Post.findOneAndUpdate( { slug }, { $inc: { visit: 1 } }, { new: true } ).populate("user", "userName img").lean();
     if(!post){
         throw new ApiError(StatusCodes.BAD_REQUEST, GET_UNSUCCESS_MESSAGES);
     };

@@ -3,16 +3,22 @@ import Post from './Post'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useApi } from '../helper/useApi'
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useSearchParams } from 'react-router-dom';
+import Loader from './Loader';
 
-const fetchPosts = async (pageParam) => {
+const fetchPosts = async (pageParam, searchParams) => {
+  const searchParamObj = Object?.fromEntries([...searchParams])
+  console.log(searchParamObj);
+  
   const data =  await useApi("get", "/post", {
-    params: {page: pageParam, limit: 2},
+    params: {page: pageParam, limit: 10, ...searchParamObj},
   });
-  // console.log(data);
   return data?.data;
 }
-// fetchData()
+
 function PostLists () {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const {
     data,
     error,
@@ -22,13 +28,14 @@ function PostLists () {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ['posts'],
-    queryFn: ({pageParam = 1}) => fetchPosts(pageParam),
+    queryKey: ['posts', searchParams.toString()],
+    refetchOnWindowFocus: false,
+    queryFn: ({pageParam = 1}) => fetchPosts(pageParam, searchParams),
     initialPageParam: 1,
     getNextPageParam: (lastPage, pages) => lastPage?.hasMore ? pages?.length + 1 : undefined,
   })
 
-  if (status === "pending") return <div className='flex gap-2 items-center justify-center'><p className='text-[23px] font-semibold'>Loading</p> <img src="https://img.icons8.com/?size=100&id=I2EAeOMEYXQj&format=png&color=000000" /> </div>;
+  if (status === "pending") return<Loader />;
   
   if (status === "error") return 'An error has occurred: ' + error.message
 
@@ -46,8 +53,8 @@ function PostLists () {
       </p>
     }
   >
-    {allPosts.map((post) => (
-      <Post key={post._id} post={post} />
+    {allPosts?.map((post) => (
+      <Post key={post?._id} post={post} />
     ))}
   </InfiniteScroll>
   )

@@ -21,8 +21,7 @@ function Home() {
         </div>
         {/* animated button */}
         <Link to="/createBlog" className='relative hidden md:block'>
-            <svg style={{animationDuration: '2000ms'}} viewBox='0 0 200 200' width='200' height='200' className='text-lg tracking-widest' >
-            {/* className='text-lg tracking-widest animate-spin' */}
+            <svg style={{animationDuration: '2000ms'}} viewBox='0 0 200 200' width='200' height='200' className='text-lg tracking-widest animate-spin' >
               <path id='circlePath' fill='none' d='M 100, 100 m -75, 0 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0' />
             <text>
               <textPath href='#circlePath' startOffset="0%">Write your story •</textPath>

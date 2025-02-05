@@ -24,15 +24,15 @@ function Nvabar() {
       slug: "/",
     },
     {
-      name: "Trending",
-      slug: "/trending",
+      name: "Write Blog",
+      slug: "/write",
     },
     {
       name: 'Most Popular',
       slug: '/mostpopular',
     },
     {
-      name: 'About',
+      name: 'Category',
       slug: '/about',
     },
   ]
