@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { sendEmailLink, sendEmailOTP } from '../utils/sendEmail.js';
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { responseMessages } from "../constant/responseMessages.js";
-const { MISSING_FIELDS, USER_EXISTS, UN_AUTHORIZED, SUCCESS_REGISTRATION, NO_USER, SUCCESS_LOGIN, INVALID_OTP, OTP_EXPIRED, EMAIL_VERIFY, SUCCESS_LOGOUT, MISSING_FIELD_EMAIL_PASSWORD, UNAUTHORIZED_REQUEST, GET_SUCCESS_MESSAGES, RESET_LINK_SUCCESS, PASSWORD_CHANGE, NOT_VERIFY, PASSWORD_AND_CONFIRM_NO_MATCH, MISSING_FIELD_EMAIL, RESET_OTP_SECCESS, INVALID_TOKEN, TOKEN_EXPIRED, SUCCESS_TOKEN, INVALID_DATA } = responseMessages
+const { MISSING_FIELDS, USER_EXISTS, UN_AUTHORIZED, SUCCESS_REGISTRATION, NO_USER, SUCCESS_LOGIN, INVALID_OTP, OTP_EXPIRED, EMAIL_VERIFY, SUCCESS_LOGOUT, MISSING_FIELD_EMAIL_PASSWORD, UNAUTHORIZED_REQUEST, GET_SUCCESS_MESSAGES, RESET_LINK_SUCCESS, PASSWORD_CHANGE, NOT_VERIFY, PASSWORD_AND_CONFIRM_NO_MATCH, UPDATE_UNSUCCESS_MESSAGES, MISSING_FIELD_EMAIL, RESET_OTP_SECCESS, INVALID_TOKEN, TOKEN_EXPIRED, SUCCESS_TOKEN, INVALID_DATA, NO_DATA_FOUND, IMAGE_SUCCESS, IMAGE_ERROR } = responseMessages
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -282,10 +282,7 @@ export const signin = asyncHandler(async (req, res) => {
       
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
     
-    console.log("ok");
-
     const loggedInusers = await  User.findById(user._id).select("-password, -refreshToken");
-    console.log(loggedInusers);
     
     const options = {
         httpOnly: true,
@@ -299,6 +296,48 @@ export const signin = asyncHandler(async (req, res) => {
         SUCCESS_LOGIN,
         {user: loggedInusers, accessToken, SUCCESS_LOGIN },
     ))
+})
+
+
+
+export const getUser = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    
+    if (!userId) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, UPDATE_UNSUCCESS_MESSAGES);
+    };
+
+    const user = await User.findOne({_id: userId});
+    if (!user) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, NO_USER);
+    };
+    return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, "", user));
+ 
+})
+
+
+
+export const uploadImage = asyncHandler(async (req, res) => {
+    const userId = req?.user._id;
+    if (!userId) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, UPDATE_UNSUCCESS_MESSAGES);
+    };
+
+    const { img } = req?.body;
+    if (!img) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, IMAGE_ERROR);
+    };
+
+    const updateUserImage = await User.findByIdAndUpdate(
+        userId, 
+        { $set:{ img: img } }, 
+        {new: true} 
+    );
+    if (!updateUserImage) {
+        throw new ApiError(StatusCodes.NOT_FOUND, NO_USER);
+    };
+    
+    return res.status(StatusCodes.OK).send(StatusCodes.OK, IMAGE_SUCCESS) ;
 })
 
 
@@ -432,3 +471,4 @@ export const refreshAccessToken =  asyncHandler(async (req, res) => {
 export const getCurrentUser = asyncHandler(async (req, res) => {
     return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, GET_SUCCESS_MESSAGES, req.user));
 })
+

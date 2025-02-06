@@ -4,7 +4,6 @@ import ImageKit from "../utils/imageKit";
 import { format } from "timeago.js"
 
 const BlogSection = ({post}) => {
-  
   return (
       <div className="container mx-auto flex flex-col xl:flex-row mb-2 overflow-x-hidden">
         <div className="mt-2 lg:-mx-6 lg:flex lg:items-center">
@@ -28,16 +27,15 @@ const BlogSection = ({post}) => {
             <Link to={`/${post?.slug}`} className="inline-block mt-2 text-blue-500 underline hover:text-blue-400">
               Read more
             </Link>
-
-            <div className="flex items-center mt-6">
-              <img
-                className="object-cover object-center w-10 h-10 rounded-full"
-                src="https://images.unsplash.com/photo-1531590878845-12627191e687?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
-                alt="Author"/>
-
-              <div className="mx-4">
-                <h1 className="text-sm text-gray-700 dark:text-gray-200">Amelia Anderson</h1>
-              </div>
+            <div className="flex items-center mt-4">
+              {
+                !post.user?.img ? 
+                <img
+                  className="object-cover object-center w-10 h-10 rounded-full"
+                  src="https://images.unsplash.com/photo-1531590878845-12627191e687?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
+                  alt="Author"/> : 
+                  <ImageKit className="object-cover object-center w-10 h-10 rounded-full" src={post.user?.img} />
+              }
             </div>
           </div>
         </div>

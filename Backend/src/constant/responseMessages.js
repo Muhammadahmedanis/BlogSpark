@@ -26,6 +26,7 @@ export const responseMessages = {
     INVALID_TOKEN: "Unauthorized User, Invalid token",
     INVALID_DATA: 'Invalid Credentials',
     IMAGE_ERROR: 'image URL or path is missing',
+    IMAGE_SUCCESS:'image upload sucessfully',
     
     
     MISSING_FIELDS: 'All Fields are required',

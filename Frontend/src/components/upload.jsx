@@ -22,7 +22,7 @@ const authenticator =  async () => {
     }
 };
 
-function Upload({ type, children, setProgres, setData }) {
+function Upload({ type, children, setProgres=null, setData }) {
 
     const ref = useRef(null);
 
@@ -38,7 +38,7 @@ function Upload({ type, children, setProgres, setData }) {
 
     const onUploadProgress = (progress) => {
     console.log(progress);
-    setProgres(Math.round((progress.loaded/progress.total) * 100));
+    {setProgres != null && setProgres(Math.round((progress.loaded/progress.total) * 100));}
     };
 
   return (

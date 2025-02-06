@@ -112,7 +112,7 @@ export const getPosts = asyncHandler(async (req, res) => {
     }
     
     const posts = await Post.find(query)
-    .populate("user", "userName")
+    .populate("user", "userName img")
     .sort(sortObj) 
     .limit(limit)
     .skip((page - 1) * limit)
@@ -126,11 +126,11 @@ export const getPosts = asyncHandler(async (req, res) => {
 
 
 
-// @desc    GETPOST
+// @desc    GETPOSTBYSearch
 // @route   DELETE /api/v1/post/:slug
 // @access  User
 
-export const getPost = asyncHandler(async (req, res) => {
+export const getPostBySearchParams = asyncHandler(async (req, res) => {
     const { slug } = req.params;
     if(!slug){
         throw new ApiError(StatusCodes.BAD_REQUEST, EMPTY_URL_PARAMS);
@@ -218,3 +218,22 @@ export const AllPost = asyncHandler(async (req, res) => {
     }
     return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, "", getPost));
 });
+
+
+
+// @desc    GETMYPOST
+// @route   GET /api/v1/post/
+// @access  Public
+
+export const getSaveBlog =  asyncHandler(async (req, res) => {
+    const userId = req?.user?._id;
+    if(!userId){
+        throw new ApiError(StatusCodes.BAD_REQUEST, UPDATE_UNSUCCESS_MESSAGES);
+    };
+
+    const userBlog = await User.findById(userId).populate('savedPosts').select('-password -email -_id -role -isVerified -createdAt -updatedAt -__v -refreshToken');
+    if (!userBlog) {
+        throw new ApiError(StatusCodes.NOT_FOUND, NO_USER);
+    };
+    return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, "", userBlog));
+})

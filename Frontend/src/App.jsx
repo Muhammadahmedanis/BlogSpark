@@ -13,6 +13,7 @@ import Layout from './layout/Layout.jsx';
 import { useSelector } from 'react-redux';
 import Dashboard from './Admin/routes/Dashboard.jsx';
 import Blogs from './Admin/routes/blogs.jsx';
+import SavedPosts from './routes/SavedPosts.jsx';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useSelector((state) => state.auth);
@@ -47,9 +48,10 @@ function App() {
           
           <Route path='/' element={ <ProtectedRoute> <Home /> </ProtectedRoute> } />
 
-          <Route path='/posts' element={ <PostList /> } />
+          <Route path='/allBlogs' element={ <PostList /> } />
           <Route path='/:slug' element={ <ProtectedRoute> <SinglePost /> </ProtectedRoute> } />
           <Route path='/write' element={ <ProtectedRoute> <CreateBlog /> </ProtectedRoute> } />
+          <Route path='/savedPosts' element={ <ProtectedRoute> <SavedPosts /> </ProtectedRoute> } />
 
           <Route path='/dashboard' element={<ProtectedRouteAdmin> <Dashboard /> </ProtectedRouteAdmin>} />
           <Route path='/blogs' element={<ProtectedRouteAdmin> <Blogs />  </ProtectedRouteAdmin>} />

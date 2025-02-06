@@ -6,7 +6,6 @@ import { Bounce, ToastContainer } from 'react-toastify';
 import { AuthHandler } from './components/AuthHandler.jsx';
 import { Provider } from 'react-redux';
 import { store } from './redux/store.js';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()

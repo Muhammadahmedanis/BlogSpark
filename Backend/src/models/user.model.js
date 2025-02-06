@@ -25,10 +25,10 @@ const userSchema = new mongoose.Schema({
     img: {
         type: String,
     },
-    savedPosts: {
-        type: [String],
-        default: [],
-    },
+    savedPosts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",  // Reference to the Post collection
+    }],
     role: {
         type: String,
         default: "user",

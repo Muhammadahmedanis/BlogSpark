@@ -8,9 +8,9 @@ import Loader from './Loader';
 
 const fetchPosts = async (pageParam, searchParams) => {
   const searchParamObj = Object?.fromEntries([...searchParams])
-  console.log(searchParamObj);
+  // console.log(searchParamObj);
   
-  const data =  await useApi("get", "/post", {
+  const data =  await useApi("get", "/post/", {
     params: {page: pageParam, limit: 10, ...searchParamObj},
   });
   return data?.data;
