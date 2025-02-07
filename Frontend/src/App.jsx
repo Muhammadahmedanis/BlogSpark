@@ -12,7 +12,7 @@ import Otp from './routes/Otp.jsx';
 import Layout from './layout/Layout.jsx';
 import { useSelector } from 'react-redux';
 import Dashboard from './Admin/routes/Dashboard.jsx';
-import Blogs from './Admin/routes/blogs.jsx';
+import Blogs from './Admin/routes/Blogs.jsx';
 import SavedPosts from './routes/SavedPosts.jsx';
 import Forgotpass from './routes/ForgotPass.jsx';
 import NotFound from './routes/Notfound.jsx';
