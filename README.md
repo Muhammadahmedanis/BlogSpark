@@ -1,6 +1,6 @@
 # <a name="Title">MERN Blog Spark</a>
 
-![Blogging Site Mockup](/frontend/public/Mockup-Template.png)
+![Blog Spark Mockup](/Frontend/public/MockupTemplate.png)
 
 A fully responsive and feature-rich blogging platform built with the MERN stack. This project provides users with an engaging experience for reading, writing, and managing blogs while ensuring smooth performance and modern design.
 
@@ -22,8 +22,8 @@ A fully responsive and feature-rich blogging platform built with the MERN stack.
 - **Authentication:**
   - Login/Signup via username and password or Google authentication.
 - **Blog Management:**
-  - Write, update, and delete blogs.
-  - Add images and videos to blogs.
+  - Write and delete blogs.
+  - Add images to blogs.
   - View personal written blogs.
 - **Saved Blogs:** View and manage saved blogs.
 - **Profile Management:**
@@ -48,7 +48,7 @@ A fully responsive and feature-rich blogging platform built with the MERN stack.
 ## Technologies Used
 
 - **Frontend:** React, TailwindCSS
-- **State Management:** Zustand
+- **State Management:** Redux Toolkit
 - **Data Fetching:** TanStack/React-Query
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB
@@ -58,7 +58,7 @@ A fully responsive and feature-rich blogging platform built with the MERN stack.
 
 ## Live Demo
 
-[Visit the Blogging Site](https://blogging-site-official.vercel.app) 
+[Visit the Blogging Site](https://blog-spark.vercel.app) 
 
 ## Repository
 
