@@ -18,6 +18,7 @@ app.use(cors({
   allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"]
 }));
 
+
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
@@ -25,6 +26,9 @@ app.use(cookieParser());
 // app.use(mongoSanitize());
 app.use(helmet());
 
+app.get("/", (req, res) => {
+  res.send("Welcome to My Page")
+})
 
 // Routes
 app.use("/api/v1/auth", authRouter);
