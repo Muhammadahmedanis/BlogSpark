@@ -8,7 +8,7 @@ const Post = ({post}) => {
   return (
       <div className="container mx-auto flex flex-col xl:flex-row mb-2 overflow-x-hidden">
         <div className="mt-2 lg:-mx-6 lg:flex lg:items-center">
-          {/* {post?.img && <ImageKit src={post?.img}  className="object-cover w-full lg:mx-6 lg:w-1/3 rounded-xl h-52 lg:h-64" />} */}
+          {post?.img && <img src={post?.img}  className="object-cover w-full lg:mx-6 lg:w-1/3 rounded-xl h-52 lg:h-64" />}
           <div className="mt-6 lg:w-1/2 lg:mt-0 lg:mx-6">
             {/* <p className="text-sm text-blue-500 uppercase">category</p> */}
             <Link to={`/${post?.slug}`} className="block mt-4 cursor-pointer text-2xl font-semibold text-gray-800 hover:underline dark:text-white">

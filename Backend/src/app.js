@@ -26,9 +26,9 @@ app.use(cookieParser());
 // app.use(mongoSanitize());
 app.use(helmet());
 
-app.get("/", (req, res) => {
-  res.send("Welcome to My Page")
-})
+// app.get("/", (req, res) => {
+//   res.send("Welcome to My Page")
+// })
 
 // Routes
 app.use("/api/v1/auth", authRouter);

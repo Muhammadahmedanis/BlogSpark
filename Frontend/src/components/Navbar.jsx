@@ -10,6 +10,7 @@ import { useApi } from "../helper/useApi";
 import { logout } from "../redux/userSlice";
 import { toast } from "react-toastify";
 // import Upload from "./upload";
+import logo from '/logo.png';
 
 function Navbar() {
   const dispatch = useDispatch();
@@ -19,7 +20,7 @@ function Navbar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const[isChanges, setIsChanges] = useState(user?.userName);
-  const [cover, setCover] = useState(null);
+  const [file, setFile] = useState('');
 
   useEffect(() => {
     setIsChanges(userInfo?.userName);
@@ -37,23 +38,30 @@ function Navbar() {
     }
   }
 
-  // Function to upload image
-  const uploadImg = async () => {
-    if (!cover?.filePath) return; // Prevent unnecessary API calls
+const uploadImg = async () => {
+  if (!file) return;
+  console.log(file);
   
-    try {
-      const response = await useApi("post", "/auth/uploadImage", { img: cover.filePath });
-    } catch (error) {
-      console.error("Image upload failed:", error);
-    }
-  };
+  try {
+    const formData = new FormData();
+    formData.append("avatar", file[0]); // Use the correct field name expected by backend
 
-  useEffect(() => {
-    if (cover?.filePath) {
-      uploadImg();
-    }
-  }, [cover]); // Only runs when `cover` changes
+    const response = await useApi("post", "/user/uploadAvatar", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    console.log("Image uploaded successfully:", response);
+  } catch (error) {
+    console.error("Image upload failed:", error);
+  }
+};
   
+
+useEffect(() => {
+  if (file) {
+    uploadImg();
+  }
+}, [file]);
   
   
   const navItems =
@@ -107,7 +115,7 @@ function Navbar() {
             {!isOpen && <FaBars onClick={() => setIsOpen(!isOpen)} />}
           </div>
           <div className="flex gap-2 items-center">
-            {/* <ImageKit src="logo.png" alt="logo" className="h-[35px] w-[40px]" /> */}
+             <img src={logo} alt="logo" className="h-[35px] w-[40px]" />
             <Link to="/" className="font-bold text-2xl">
               Blog <span className="text-gray-100">Spark</span>
             </Link>
@@ -157,20 +165,25 @@ function Navbar() {
               </button>
             </div>
               <div>
-              {/* <Upload type="image" setData={setCover}>
-                { !cover?.url ? 
-                  <ImageKit
-                  className="w-[110px] h-[110px] mx-auto object-cover border border-gray-600 rounded-full"
-                  src={userInfo?.img || "icon.jpg"} 
-                /> : 
-                <img
-                  className="w-[110px] h-[110px] mx-auto rounded-full object-cover border border-gray-600"
-                  src={`${cover?.url || "icon.jpg"}?tr=w-110,h-110,c-at-max`}
-                  alt="Profile"
+              <label htmlFor="file" className='flex items-center gap-2 cursor-pointer'>
+              {
+                  userInfo?.img ?
+                  (
+                    <img
+                    className="w-[110px] h-[110px] mx-auto object-contain border border-gray-600 rounded-full"
+                    src={userInfo?.img} 
+                    /> 
+                  ) :
+                  (
+                    <img className='w-[110px] p-1 h-[110px] mx-auto rounded-full border border-gray-600 object-cover' src={file ? URL.createObjectURL(file[0]) : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr3jhpAFYpzxx39DRuXIYxNPXc0zI5F6IiMQ&s"} alt="" />
+                  )
+                }
+              </label>
+                <input type="file" id='file' style={{display: "none"}} onChange={(e) => { 
+                    setFile(e.target.files);  
+                    uploadImg();
+                  }}  
                 />
-              }
-
-              </Upload> */}
               </div>
               <div className="text-center">
                 <div className="flex justify-center items-center gap-1">

@@ -27,7 +27,7 @@ function SinglePost() {
   if (isPending) return <Loader />;
   if(error) return error.message;
   if(!data) return "Post not found!";
-  // console.log(data);
+  console.log(data);
   
 
   return (
@@ -46,7 +46,7 @@ function SinglePost() {
           <p className='text-gray-500 font-medium'>{data?.content}</p>
         </div>
         <div className='hidden lg:block w-2/6'>
-          {/* { data?.img && <ImageKit src={data.img} width='500' height='300' className='rounded-2xl'/>} */}
+          { data?.img && <img src={data.img} width='500' height='300' className='rounded-2xl'/>}
         </div>
       </div>
 
@@ -67,7 +67,7 @@ function SinglePost() {
           <h1 className='mb-3 text-sm font-medium'>Author</h1>
           <div className='flex flex-col gap-4'>
             <div className='flex gap-4 items-center'>
-              {/* <ImageKit src="default-image.jpg" className='w-12 h-12 rounded-full object-cover' width='48' height='48' /> */}
+              <img src={data?.user?.img} className='w-12 h-12 rounded-full object-cover' width='48' height='48' />
               <Link className='text-blue-800'>{data?.user?.userName.charAt(0).toUpperCase() + data?.user?.userName?.slice(1)}</Link>
             </div>
             <p className='text-sm text-gray-500'>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
