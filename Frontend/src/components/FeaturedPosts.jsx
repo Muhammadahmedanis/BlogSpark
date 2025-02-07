@@ -1,5 +1,5 @@
 import React from 'react'
-import ImageKit from '../utils/imageKit'
+import ImageKit from '../utils/ImageKit.jsx'
 import { Link } from 'react-router-dom'
 import { useApi } from '../helper/useApi';
 import { useQuery } from '@tanstack/react-query';
@@ -65,7 +65,7 @@ function FeaturedPosts() {
             </div>
               <div className='w-2/3'>
                 <div className='flex items-center gap-4 text-sm lg:textbase mb-4'>
-                  <h1 className='font-semibold'>02.</h1>
+                  <h1 className='font-semibold'>03.</h1>
                   <Link className='text-blue-800'>{posts[2]?.category}</Link>
                   <span className='text-gray-500 text-sm'>{format(posts[2]?.createdAt)}</span>
                 </div>
@@ -80,7 +80,7 @@ function FeaturedPosts() {
             </div>
               <div className='w-2/3'>
                 <div className='flex items-center gap-4 text-sm lg:textbase mb-4'>
-                  <h1 className='font-semibold'>03.</h1>
+                  <h1 className='font-semibold'>04.</h1>
                   <Link className='text-blue-800'>{posts[3]?.category}</Link>
                   <span className='text-gray-500 text-sm'>{format(posts[3]?.createdAt)}</span>
                 </div>

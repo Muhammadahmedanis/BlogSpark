@@ -48,6 +48,7 @@ function SideMenu() {
             <Link className="underline cursor-pointer" onClick={() => handleCategoryChange("marketing")}>Marketing</Link>
             <Link className="underline cursor-pointer" onClick={() => handleCategoryChange("development")}>Development</Link>
             <Link className="underline cursor-pointer" onClick={() => handleCategoryChange("database")}>Database</Link>
+            <Link className="underline cursor-pointer" onClick={() => handleCategoryChange("artificial-intelligence")}>Artificial Intelligence</Link>
         </div>
     </div>
   )

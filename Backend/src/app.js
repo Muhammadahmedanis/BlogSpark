@@ -10,7 +10,6 @@ import commentRouter from "./routes/comment.routes.js";
 import userRouter from "./routes/user.routes.js";
 
 const app = express();
-
 // Middleware Configurations
 app.use(cors({
   origin: [process.env.ALLOWED_ORIGIN_1, process.env.ALLOWED_ORIGIN_2], // Array of allowed origins
@@ -18,6 +17,7 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"]
 }));
+
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));

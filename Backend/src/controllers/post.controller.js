@@ -221,9 +221,9 @@ export const AllPost = asyncHandler(async (req, res) => {
 
 
 
-// @desc    GETMYPOST
+// @desc    GET-MY-SAVED-POST
 // @route   GET /api/v1/post/
-// @access  Public
+// @access  Private
 
 export const getSaveBlog =  asyncHandler(async (req, res) => {
     const userId = req?.user?._id;
@@ -231,9 +231,33 @@ export const getSaveBlog =  asyncHandler(async (req, res) => {
         throw new ApiError(StatusCodes.BAD_REQUEST, UPDATE_UNSUCCESS_MESSAGES);
     };
 
-    const userBlog = await User.findById(userId).populate('savedPosts').select('-password -email -_id -role -isVerified -createdAt -updatedAt -__v -refreshToken');
-    if (!userBlog) {
-        throw new ApiError(StatusCodes.NOT_FOUND, NO_USER);
-    };
-    return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, "", userBlog));
+    const userSaveBlog = await User.findById(userId) .populate({
+        path: "savedPosts",
+        select: "img title slug desc category content _id" // Only include necessary fields
+    })
+    .select("-password -email -role -isVerified -__v -refreshToken"); // Exclude unnecessary user fields
+    
+if (!userSaveBlog || !userSaveBlog.savedPosts.length) {
+    throw new ApiError(StatusCodes.NOT_FOUND, NO_DATA_FOUND);
+}
+    return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, "", userSaveBlog));
 })
+
+
+// @desc    GET-MY-SAVED-POST
+// @route   GET /api/v1/post/
+// @access  Private
+
+export const getMyBlog = async (req, res) => {
+    const userId = req?.user?._id;
+    if(!userId){
+        throw new ApiError(StatusCodes.BAD_REQUEST, UPDATE_UNSUCCESS_MESSAGES);
+    };
+
+    const myBlog = await Post.find({user: userId}).populate("user","userName img");
+    
+    if (!myBlog.length) {
+        throw new ApiError(StatusCodes.NOT_FOUND, NO_DATA_FOUND);
+    };
+    return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, "", myBlog));
+}

@@ -12,7 +12,6 @@ function SavedPosts() {
         const user = {
           userName: users?.userName,
           img: users?.img,
-
         }
         const postUserWithInfo = users?.savedPosts?.map(post => ({
           ...post, 

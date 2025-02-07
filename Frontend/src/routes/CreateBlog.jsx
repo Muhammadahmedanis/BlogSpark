@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import React, { useActionState, useState } from 'react';
-import ReactQuill from 'react-quill-new';
-import 'react-quill-new/dist/quill.snow.css';
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { useApi } from '../helper/useApi';
 import { useNavigate } from 'react-router-dom';
 import Upload from '../components/upload';
@@ -51,7 +51,7 @@ function CreateBlog() {
             <option value="web-design">Web Design</option>
             <option value="development">Development</option>
             <option value="marketing">Marketing</option>
-            <option value="search-engine">Search Engine</option>
+            <option value="artificial-intelligence">Artificial Intelligence</option>
           </select>
         </div>
         <textarea name="content" placeholder='A Short Description' className='bg-white border-none outline-none p-2 rounded-xl shadow-md' />

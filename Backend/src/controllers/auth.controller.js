@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { sendEmailLink, sendEmailOTP } from '../utils/sendEmail.js';
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { responseMessages } from "../constant/responseMessages.js";
-const { MISSING_FIELDS, USER_EXISTS, UN_AUTHORIZED, SUCCESS_REGISTRATION, NO_USER, SUCCESS_LOGIN, INVALID_OTP, OTP_EXPIRED, EMAIL_VERIFY, SUCCESS_LOGOUT, MISSING_FIELD_EMAIL_PASSWORD, UNAUTHORIZED_REQUEST, GET_SUCCESS_MESSAGES, RESET_LINK_SUCCESS, PASSWORD_CHANGE, NOT_VERIFY, PASSWORD_AND_CONFIRM_NO_MATCH, UPDATE_UNSUCCESS_MESSAGES, MISSING_FIELD_EMAIL, RESET_OTP_SECCESS, INVALID_TOKEN, TOKEN_EXPIRED, SUCCESS_TOKEN, INVALID_DATA, NO_DATA_FOUND, IMAGE_SUCCESS, IMAGE_ERROR } = responseMessages
+const { MISSING_FIELDS, USER_EXISTS, UN_AUTHORIZED, SUCCESS_REGISTRATION, NO_USER, SUCCESS_LOGIN, INVALID_OTP, OTP_EXPIRED, EMAIL_VERIFY, SUCCESS_LOGOUT, MISSING_FIELD_EMAIL_PASSWORD, UNAUTHORIZED_REQUEST, GET_SUCCESS_MESSAGES, RESET_LINK_SUCCESS, PASSWORD_CHANGE, NOT_VERIFY, PASSWORD_AND_CONFIRM_NO_MATCH, UPDATE_UNSUCCESS_MESSAGES, MISSING_FIELD_EMAIL, RESET_OTP_SECCESS, INVALID_TOKEN, TOKEN_EXPIRED, SUCCESS_TOKEN, INVALID_DATA, NO_DATA_FOUND, IMAGE_SUCCESS, IMAGE_ERROR , UPDATE_SUCCESS_MESSAGES, UNAUTHORIZED} = responseMessages
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -26,134 +26,50 @@ const generateAccessAndRefreshToken = async (userId) => {
 // @desc    SIGNUP
 // @route   POST /api/v1/auth/signup
 // @access  Public
-
-export const signup = asyncHandler( async (req, res) => {
-    
+export const signup = asyncHandler(async (req, res) => {
     const { userName, email, password } = req.body;
-
-    // Validate required fields
-    if ([userName, email, password].some((field) => typeof field !== "string" || field.trim() === "")) {
+    if (!userName || !email || !password || typeof userName !== "string" || typeof email !== "string" || typeof password !== "string") {
         throw new ApiError(StatusCodes.BAD_REQUEST, MISSING_FIELDS);
     }
-    console.log(req.body);
-    
-    // Check if the user already exists
-    const isUserExist = await User.findOne({ $or: [{ userName }, { email }] });
-    console.log(isUserExist);
-    
+
+    const [isUserExist, otp] = await Promise.all([
+        User.findOne({ $or: [{ userName }, { email }] }).lean(),
+        uuidv4().slice(0, 6) // Generate OTP
+    ]);
     if (isUserExist) {
         throw new ApiError(StatusCodes.CONFLICT, USER_EXISTS);
     }
-    
-    // Generate OTP
-    const otp = uuidv4().slice(0, 6);
-    const otpExpiry = Date.now() + 600000; // OTP expires in 10 minutes
-    console.log(otp);
-        
-    // Create the user
-    const user = await User.create({
+
+    const otpExpiry = Date.now() + 600000; // 10 minutes expiry
+    const newUser = await User.create({
         userName: userName.toLowerCase(),
         email,
         password,
         otp,
         expiresIn: otpExpiry,
     });
-    
-    // Send OTP via email
-    const emailResponse = await sendEmailOTP(email, otp);
-    if (!emailResponse) {
+
+    const emailSent = await sendEmailOTP(email, otp);
+    if (!emailSent) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, EMAIL_ERROR);
     }
-    
-    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
-        
-    // Retrieve the created user without sensitive fields
-    const createdUser = await User.findById(user._id).select("-password -refreshToken");
-    console.log(createdUser);
-    
-    if (!createdUser) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, NO_USER);
-    }
-    // Respond with success
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(newUser._id);
     const options = {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-    }
-        
-    return res
-    .status(StatusCodes.CREATED)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .send(new ApiResponse(StatusCodes.OK, 
-        SUCCESS_REGISTRATION,
-        {user: createdUser, accessToken, refreshToken},
-    ))
-    
-})
-
-
-
-
-// @desc    SIGNUP
-// @route   POST /api/v1/auth/signup
-// @access  Public
-
-export const googleSignup = asyncHandler( async (req, res) => {
-    
-    const { userName, email, password, isVerified } = req.body;
-
-    // Validate required fields
-    if ([userName, email, password, isVerified].some((field) => typeof field !== "string" || field.trim() === "")) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, MISSING_FIELDS);
-    }
-    console.log(req.body);
-    
-    // Check if the user already exists
-    const isUserExist = await User.findOne({ $or: [{ userName }, { email }] });
-    if (isUserExist) {
-        throw new ApiError(StatusCodes.CONFLICT, USER_EXISTS);
     };
 
-    if(!isVerified){
-        throw new ApiError(StatusCodes.OK, NOT_VERIFY);
-    }
-    
-    // Create the user
-    const user = await User.create({
-        userName: userName.toLowerCase(),
-        email,
-        password,
-        isVerified,
-    });
-    
-    
-    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
-        
-    // Retrieve the created user without sensitive fields
-    const createdUser = await User.findById(user._id).select("-password -refreshToken");
-    console.log(createdUser);
-    
-    if (!createdUser) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, NO_USER);
-    }
-    // Respond with success
-    const options = {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-    }
-        
     return res
-    .status(StatusCodes.CREATED)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .send(new ApiResponse(StatusCodes.OK, 
-        SUCCESS_REGISTRATION,
-        {user: createdUser, accessToken, refreshToken, SUCCESS_REGISTRATION },
+        .status(StatusCodes.CREATED)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .send(new ApiResponse(StatusCodes.OK, SUCCESS_REGISTRATION,
+        {user: createdUser, accessToken, refreshToken},
     ))
-    
-})
+});
+
 
 
 
@@ -299,10 +215,49 @@ export const signin = asyncHandler(async (req, res) => {
 })
 
 
-
-export const getUser = asyncHandler(async (req, res) => {
-    const userId = req.user._id;
+export const googleSignin = asyncHandler(async (req, res) => {
+    const { email, userName, isVerified} = req.body;
+    if(!email || !userName || !isVerified){
+        throw new ApiError(StatusCodes.BAD_REQUEST, MISSING_FIELD_EMAIL_PASSWORD);
+    }
+    if (isVerified != true) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, NOT_VERIFY);
+    };
     
+    const user = await User.findOne({ 
+        $and: [{ userName: { $regex: new RegExp(`^${userName}$`, "i") } }, { email: { $regex: new RegExp(`^${email}$`, "i") } }] 
+    });
+    if(!user){
+        throw new ApiError(StatusCodes.NOT_FOUND, NO_USER);
+    }
+    
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
+    
+    const loggedInusers = await  User.findById(user._id).select("-password, -refreshToken");
+    
+    const options = {
+        httpOnly: true,
+        secure: true,
+    }
+    return res
+    .status(StatusCodes.OK)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .send(new ApiResponse(StatusCodes.OK, 
+        SUCCESS_LOGIN,
+        {user: loggedInusers, accessToken, SUCCESS_LOGIN },
+    ))
+})
+
+
+
+
+// @desc    GET-USER-INFO
+// @route   POST /api/v1/auth/isUser
+// @access  Private
+
+export const getUserInfo = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
     if (!userId) {
         throw new ApiError(StatusCodes.BAD_REQUEST, UPDATE_UNSUCCESS_MESSAGES);
     };
@@ -315,6 +270,25 @@ export const getUser = asyncHandler(async (req, res) => {
  
 })
 
+
+
+export const updateUser = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    if (!userId) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, UPDATE_UNSUCCESS_MESSAGES);
+    };
+
+    const { userName } = req.body;
+    if (!userName) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, NO_DATA_FOUND);
+    }
+    
+    const user = await User.findByIdAndUpdate(userId, 
+        { userName },
+        {new: true}
+    )
+    return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, UPDATE_SUCCESS_MESSAGES));
+})
 
 
 export const uploadImage = asyncHandler(async (req, res) => {
@@ -371,33 +345,26 @@ export const logout = asyncHandler(async (req, res) => {
 
 export const forgotPassword = asyncHandler(async (req, res) => {
     const { email } = req.body;
-    
     if (!email) {
-        return res.status(StatusCodes.BAD_REQUEST).send(new ApiError(StatusCodes.BAD_REQUEST, MISSING_FIELD_EMAIL));
+        return res.status(StatusCodes.BAD_REQUEST).json(new ApiError(StatusCodes.BAD_REQUEST, MISSING_FIELD_EMAIL));
     }
 
-    const user = await User.findOne({ email });
-    
+    const user = await User.findOne({ email }).select("isVerified refreshToken");
     if (!user) {
-        return res.status(StatusCodes.NOT_FOUND).send(new ApiError(StatusCodes.NOT_FOUND, NO_USER_FOUND));
+        return res.status(StatusCodes.NOT_FOUND).json(new ApiError(StatusCodes.NOT_FOUND, NO_USER_FOUND));
     }
-    
     if (!user.isVerified) {
-        return res.status(StatusCodes.NOT_FOUND).send(new ApiError(StatusCodes.NOT_FOUND, NOT_VERIFY));
+        return res.status(StatusCodes.FORBIDDEN).json(new ApiError(StatusCodes.FORBIDDEN, NOT_VERIFY));
     }
-    
-    const isUser = await User.findById(user._id);  // true if both ObjectIds are equal
-        console.log(isUser);
-        
-    if (!isUser) {
-        return res.status(StatusCodes.UNAUTHORIZED).send(new ApiError(StatusCodes.UNAUTHORIZED, UNAUTHORIZED));
-    }
-    
-    const link = `${process.env.CLIENT_URL}/change-password/${isUser.refreshToken}`;
-    const sendLink = await sendEmailLink(email, link);
-    console.log(`Email sent: ${sendLink}`);
-    return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, RESET_LINK_SUCCESS));
+
+    const resetLink = `${process.env.ALLOWED_ORIGIN_1}/change-password/${user.refreshToken}`;
+    sendEmailLink(email, resetLink)
+        .then(() => console.log("Reset email sent successfully"))
+        .catch((err) => console.error("Error sending reset email:", err));
+
+    return res.status(StatusCodes.OK).json(new ApiResponse(StatusCodes.OK, RESET_LINK_SUCCESS));
 });
+
 
 
 

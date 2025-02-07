@@ -1,9 +1,10 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-import ImageKit from "../utils/imageKit";
+import ImageKit from "../utils/ImageKit.jsx";
 import { format } from "timeago.js"
 
-const BlogSection = ({post}) => {
+const Post = ({post}) => {
+  
   return (
       <div className="container mx-auto flex flex-col xl:flex-row mb-2 overflow-x-hidden">
         <div className="mt-2 lg:-mx-6 lg:flex lg:items-center">
@@ -43,4 +44,4 @@ const BlogSection = ({post}) => {
   );
 };
 
-export default BlogSection;
+export default Post;

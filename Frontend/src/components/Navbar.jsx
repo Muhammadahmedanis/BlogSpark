@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { RiLogoutCircleRLine } from "react-icons/ri";
+import { RiLogoutCircleRLine, RiBloggerLine } from "react-icons/ri";
 import { Link, NavLink } from "react-router-dom";
 import { MdOutlineDashboard, MdPublishedWithChanges } from "react-icons/md";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaRegUser, FaRegEdit } from "react-icons/fa";
 import { SiSimplelogin } from "react-icons/si";
-import ImageKit from "../utils/imageKit";
+import ImageKit from "../utils/ImageKit.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { useApi } from "../helper/useApi";
 import { logout } from "../redux/userSlice";
-import { FaRegUser, FaRegEdit } from "react-icons/fa";
+import { toast } from "react-toastify";
 import Upload from "./upload";
 
 function Navbar() {
@@ -21,8 +21,20 @@ function Navbar() {
   const[isChanges, setIsChanges] = useState(user?.userName);
   const [cover, setCover] = useState(null);
 
-  const handleUpdate = () => {
+  useEffect(() => {
+    setIsChanges(userInfo?.userName);
+  }, [userInfo]);
+
+  const handleUpdate = async() => {
     setIsEdit(!isEdit);
+    if (isChanges !== userInfo?.userName) {
+      try {
+        const response = await useApi("patch", "/auth/updateUser", { userName: isChanges});
+        getUser();
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }
   }
 
   // Function to upload image
@@ -138,13 +150,12 @@ function Navbar() {
       {/* Authentication Modal */}
       {isModalOpen && (
         <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-[rgba(0,0,0,0.64)] bg-opacity-10">
-          <div className="relative p-4 w-[380px] max-w-md bg-white rounded-lg shadow-sm dark:bg-gray-700">
-            <div className="flex items-center justify-end p-2 rounded-t dark:border-gray-600 border-gray-200">
+          <div className="relative px-4 pb-7 pt-4 w-[380px] max-w-md bg-white rounded-lg shadow-sm dark:bg-gray-700">
+            <div className="flex items-center justify-end px-2 rounded-t dark:border-gray-600 border-gray-200">
               <button onClick={() => setIsModalOpen(false)} className="text-gray-400 bg-transparent cursor-pointer hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8">
                 ✖
               </button>
             </div>
-            <div className="md:p-3">
               <div>
               <Upload type="image" setData={setCover}>
                 { !cover?.url ? 
@@ -172,23 +183,24 @@ function Navbar() {
                   { !isEdit ? <FaRegEdit className="cursor-pointer" size={18} /> : <MdPublishedWithChanges className="cursor-pointer" size={20} />}
                   </button>
                 </div>
-                <p className="my-2">{userInfo?.email}</p>
+                <p className="mb-2 bg-purple-300 text-white w-fit mx-auto px-6 py-1.5 rounded">{userInfo?.email}</p>
               </div>
-              <button className="flex items-center cursor-pointer justify-center w-full border bg-gray-100 border-gray-300 font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700 mb-2">
-                Update Profile
-                <FaRegUser className="font-bold" size={19} />
+              <Link to='/myBlog'>
+              <button className="flex items-center cursor-pointer justify-center w-[250px] mx-auto border bg-purple-300 border-none outline-none font-semibold gap-2 px-4 py-2 text-sm hover:bg-[#e2b0eac4] rounded text-white mb-2">
+                My Blog
+                <RiBloggerLine className="font-bold" size={19} />
               </button>
+              </Link>
               {user?.role === "admin" && (
                 <Link to="/dashboard">
-                  <button className="flex items-center cursor-pointer justify-center w-full font-semibold gap-2 px-4 py-2 text-sm border bg-gray-100 border-gray-300 hover:bg-gray-300 rounded text-gray-700 mb-2">
-                    Dashboard <MdOutlineDashboard className="font-bold w-10" size={19} />
+                  <button className="flex items-center cursor-pointer justify-center w-[250px] mx-auto font-semibold gap-2 px-4 py-2 text-sm border bg-gray-100 border-gray-300 hover:bg-gray-300 rounded text-gray-700 mb-2">
+                    Dashboard <MdOutlineDashboard className="font-bold w-6" size={19} />
                   </button>
                 </Link>
               )}
-              <button onClick={handleLogout} className="flex items-center justify-center w-full font-semibold cursor-pointer gap-2 px-4 py-2 text-sm bg-red-400 hover:bg-red-500 rounded text-gray-100">
-                Log Out <RiLogoutCircleRLine className="font-bold w-13" size={19} />
+              <button onClick={handleLogout} className="flex items-center justify-center mx-auto w-[250px] font-semibold cursor-pointer gap-2 px-4 py-2 text-sm bg-red-400 hover:bg-red-500 rounded text-gray-100">
+                Log Out <RiLogoutCircleRLine className="font-bold w-6" size={19} />
               </button>
-            </div>
           </div>
         </div>
       )}
