@@ -1,8 +1,7 @@
 import React, { useActionState, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { axiosInstance } from '../api/axios';
-import ImageKit from '../utils/imageKit';
+// import ImageKit from '../utils/imageKit';
 import { useApi } from '../helper/useApi';
 
 export const getData = (data) => {
@@ -24,14 +23,6 @@ const Otp = () => {
       setOtpNum(["", "", "", "", "", ""]);
       navigate("/");
     }
-    // try {
-      // const res = await axiosInstance.post("/auth/verify-email", { otp });
-      // console.log(res.data);
-      // toast.success(res.data.message);
-      // } catch (error) {
-      //   toast.error(error.response?.data?.message || "Something went wrong");
-      // } finally {
-      // }
   });
 
   const handleChange = (e, index) => {
@@ -59,8 +50,6 @@ const handleNewOtp = async () => {
     const { email, _id } = result;
     const payload = {email, _id};
     const data = await useApi("post", "/auth/resend-otp", payload);
-    // const response = await axiosInstance.post("/auth/resend-otp", {email, _id})
-    // toast.success(response.data.message)
   } catch (error) {
     toast.error(error.response?.data.message)
   }
@@ -80,7 +69,7 @@ const handleKeyDown = (e, index) => {
     <div className="max-w-md mx-auto text-center bg-white px-4 sm:px-8 py-10 rounded-xl shadow">
       <header className="mb-4">
         <div className="text-center flex flex-col items-center text-xl font-bold">
-          <ImageKit src='logo.png' alt="logo" className="h-16 w-16" />
+          {/* <ImageKit src='logo.png' alt="logo" className="h-16 w-16" /> */}
           <span className="mt-2"> Blog Spark</span>
         </div>
         <p className="text-[16px] text-slate-500">
