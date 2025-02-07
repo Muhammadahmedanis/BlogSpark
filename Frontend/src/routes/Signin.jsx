@@ -4,7 +4,7 @@ import { FaRegEnvelope, FaRegEyeSlash } from "react-icons/fa6";
 import { IoEyeOutline } from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
 import Label from "../components/Label";
-// import ImageKit from "../utils/ImageKit";
+import logo from '/logo.png';
 import { toast } from "react-toastify"
 import { useApi } from "../helper/useApi";
 import { useDispatch } from "react-redux";
@@ -92,7 +92,7 @@ const Signin = () => {
                 <div className="px-4 md:px-0 lg:w-6/12">
                   <div className="md:mx-6 md:p-12">
                   <div className="text-center flex flex-col items-center text-xl font-bold">
-                  {/* <ImageKit src='logo.png' alt="logo" className="h-16 w-16" /> */}
+                  <img src={logo} alt="logo" className="h-16 w-16" />
                     <span className="mt-2"> Blog Spark</span>
                   </div>
 

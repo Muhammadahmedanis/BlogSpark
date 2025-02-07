@@ -1,7 +1,7 @@
 import React, { useActionState, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-// import ImageKit from '../utils/imageKit';
+import logo from '/logo.png';
 import { useApi } from '../helper/useApi';
 
 export const getData = (data) => {
@@ -69,7 +69,7 @@ const handleKeyDown = (e, index) => {
     <div className="max-w-md mx-auto text-center bg-white px-4 sm:px-8 py-10 rounded-xl shadow">
       <header className="mb-4">
         <div className="text-center flex flex-col items-center text-xl font-bold">
-          {/* <ImageKit src='logo.png' alt="logo" className="h-16 w-16" /> */}
+          <img src={logo} alt="logo" className="h-16 w-16" />
           <span className="mt-2"> Blog Spark</span>
         </div>
         <p className="text-[16px] text-slate-500">
