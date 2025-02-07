@@ -43,7 +43,7 @@ A fully responsive and feature-rich blogging platform built with the MERN stack.
 
 - Optimistic updates for creating, saving, updating, and deleting blogs and comments.
 - Eye-catching and fully responsive UI.
-- Image and video uploads handled via **ImageKit**.
+- Image uploads handled via **Cloudinary**.
 
 ## Technologies Used
 
@@ -52,8 +52,8 @@ A fully responsive and feature-rich blogging platform built with the MERN stack.
 - **Data Fetching:** TanStack/React-Query
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB
-- **Authentication:** Firebase (Google Authentication)
-- **Media Management:** ImageKit
+- **Authentication:** React-oauth Google (Google Authentication)
+- **Media Management:** Cloudinary & Multer
 - **Infinite Scrolling:** React-Infinite-Scroll-Component
 
 ## Live Demo
