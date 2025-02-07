@@ -291,29 +291,6 @@ export const updateUser = asyncHandler(async (req, res) => {
 })
 
 
-export const uploadImage = asyncHandler(async (req, res) => {
-    const userId = req?.user._id;
-    if (!userId) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, UPDATE_UNSUCCESS_MESSAGES);
-    };
-
-    const { img } = req?.body;
-    if (!img) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, IMAGE_ERROR);
-    };
-
-    const updateUserImage = await User.findByIdAndUpdate(
-        userId, 
-        { $set:{ img: img } }, 
-        {new: true} 
-    );
-    if (!updateUserImage) {
-        throw new ApiError(StatusCodes.NOT_FOUND, NO_USER);
-    };
-    
-    return res.status(StatusCodes.OK).send(StatusCodes.OK, IMAGE_SUCCESS) ;
-})
-
 
 
 // @desc    LOGOUT

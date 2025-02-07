@@ -2,9 +2,44 @@ import { User } from "../models/user.model.js";
 import { StatusCodes } from "http-status-codes";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { responseMessages } from "../constant/responseMessages.js";
-const { UNAUTHORIZED_REQUEST, UPDATE_UNSUCCESS_MESSAGES, ADD_UNSUCCESS_MESSAGES, UPDATE_SUCCESS_MESSAGES, ADD_SUCCESS_MESSAGES, NO_USER, ADMIN_ACCESS } = responseMessages
+const { UNAUTHORIZED_REQUEST, UPDATE_UNSUCCESS_MESSAGES, ADD_UNSUCCESS_MESSAGES, UPDATE_SUCCESS_MESSAGES, ADD_SUCCESS_MESSAGES, NO_USER, ADMIN_ACCESS, IMAGE_SUCCESS } = responseMessages
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+
+
+// @desc    UPLOAD-AVATAR
+// @route   POST /api/v1/user/uploadAvatar
+// @access  User
+
+export const uploadImage = asyncHandler(async (req, res) => {
+    const userId = req?.user._id;
+    if (!userId) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, UPDATE_UNSUCCESS_MESSAGES);
+    };
+
+    const avatarFile = req?.file;
+    if (!avatarFile) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, IMAGE_ERROR);
+    };
+
+    const uploadedImage = await uploadOnCloudinary(avatarFile.path);
+    if (!uploadedImage) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Image upload failed!");
+    }
+
+    const updateUserImage = await User.findByIdAndUpdate(
+        userId, 
+        { $set:{ img: uploadedImage.secure_url } }, 
+        {new: true} 
+    );
+    if (!updateUserImage) {
+        throw new ApiError(StatusCodes.NOT_FOUND, NO_USER);
+    };
+    
+    return res.status(StatusCodes.OK).send(StatusCodes.OK, IMAGE_SUCCESS) ;
+})
+
 
 
 // @desc    GET-SAVED-USER-POST

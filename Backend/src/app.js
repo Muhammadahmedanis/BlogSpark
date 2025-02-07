@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { StatusCodes } from "http-status-codes";
-// import helmet from "helmet";
+import helmet from "helmet";
 import cookieParser from "cookie-parser";
 // import mongoSanitize from "express-mongo-sanitize";
 import authRouter from "./routes/auth.routes.js";
@@ -12,7 +12,7 @@ import userRouter from "./routes/user.routes.js";
 const app = express();
 // Middleware Configurations
 app.use(cors({
-  origin: [process.env.ALLOWED_ORIGIN_1, process.env.ALLOWED_ORIGIN_2], // Array of allowed origins
+  origin: [process.env.ALLOWED_ORIGIN_1, process.env.ALLOWED_ORIGIN_2],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"]
@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 // app.use(mongoSanitize());
-// app.use(helmet());
+app.use(helmet());
 
 
 // Routes

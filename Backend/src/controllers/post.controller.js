@@ -4,48 +4,60 @@ import { StatusCodes } from "http-status-codes";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import ImageKit from "imagekit";
+import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import { responseMessages } from "../constant/responseMessages.js";
-const { GET_UNSUCCESS_MESSAGES, UPDATE_UNSUCCESS_MESSAGES, EMPTY_URL_PARAMS, MISSING_FIELDS, CREATE_SUCCESS_MESSAGES, DUPLICATE_SLUG, DELETED_SUCCESS_MESSAGES, UNAUTHORIZED_REQUEST, ADMIN_ACCESS, ADD_SUCCESS_MESSAGES, NO_DATA_FOUND, NO_USER} = responseMessages;
+const { GET_UNSUCCESS_MESSAGES, UPDATE_UNSUCCESS_MESSAGES, EMPTY_URL_PARAMS, MISSING_FIELDS, CREATE_SUCCESS_MESSAGES, DUPLICATE_SLUG, DELETED_SUCCESS_MESSAGES, UNAUTHORIZED_REQUEST, ADMIN_ACCESS, ADD_SUCCESS_MESSAGES, NO_DATA_FOUND, NO_USER, IMAGE_ERROR} = responseMessages;
+// import ImageKit from "imagekit";
+
+
 
 // @desc    CREATEPOST
 // @route   POST /api/v1/post/create
 // @access  User
 
 export const createPost = asyncHandler(async (req, res) => {
-    const id = req.user._id;
-    if(!id){
-        throw new ApiError(StatusCodes.UNAUTHORIZED, UNAUTHORIZED_REQUEST)
+    const id = req.user?._id;
+    if (!id) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, UNAUTHORIZED_REQUEST);
     }
-    // console.log(req);
-    
-    const { title, content, img } = req.body;
-    if([title, content, img].some((field) => typeof field !== "string" || field.trim() === "")){
+
+    const { title, content } = req.body;
+    if ([title, content].some((field) => typeof field !== "string" || field.trim() === "")) {
         throw new ApiError(StatusCodes.BAD_REQUEST, MISSING_FIELDS);
-    };
+    }
 
-// 3:37
+    const imgFile = req.file; // If using `upload.single("image")`
+    if (!imgFile) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, IMAGE_ERROR);
+    }
+
+    // Upload image to Cloudinary (or any other service)
+    const uploadedImage = await uploadOnCloudinary(imgFile.path);
+    if (!uploadedImage) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Image upload failed!");
+    }
+
+    // Generate slug
     const slug = title.replace(/ /g, "-").toLowerCase();
-
     const isSlugExist = await Post.findOne({ slug });
-    if(isSlugExist){
+    if (isSlugExist) {
         throw new ApiError(StatusCodes.BAD_REQUEST, DUPLICATE_SLUG);
-    };
+    }
 
-    const newPost = new Post({...req.body, user: id, slug });
+    // Create and save the new post
+    const newPost = new Post({
+        title,
+        content,
+        img: uploadedImage.secure_url, // Save the uploaded image URL
+        user: id,
+        slug
+    });
+
     const post = await newPost.save();
     return res.status(StatusCodes.CREATED).send(new ApiResponse(StatusCodes.CREATED, CREATE_SUCCESS_MESSAGES, post));
-})
-
-const imagekit = new ImageKit({
-    urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
-    publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-    privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
 });
-export const uploadAuth = async (req, res) => {
-    const result = imagekit.getAuthenticationParameters();
-    return res.json(result)
-}
+
+
 
 
 
@@ -145,6 +157,7 @@ export const getPostBySearchParams = asyncHandler(async (req, res) => {
 // GET_SUCCESS_MESSAGES
 
 
+
 // @desc    DELETE
 // @route   DELETE /api/v1/post/:id
 // @access  User
@@ -171,6 +184,12 @@ export const deletePost = asyncHandler(async (req, res) => {
     return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, DELETED_SUCCESS_MESSAGES));
 })
 
+
+
+
+// @desc    PATCH
+// @route   DELETE /api/v1/post/featured
+// @access  User
 
 export const featuredPost =  asyncHandler(async (req, res) => {
     const userId = req.user._id;
@@ -201,6 +220,7 @@ export const featuredPost =  asyncHandler(async (req, res) => {
 
 
 
+
 // @desc    GET
 // @route   GET /api/v1/post/
 // @access  Admin
@@ -218,6 +238,7 @@ export const AllPost = asyncHandler(async (req, res) => {
     }
     return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, "", getPost));
 });
+
 
 
 
@@ -244,6 +265,8 @@ if (!userSaveBlog || !userSaveBlog.savedPosts.length) {
 })
 
 
+
+
 // @desc    GET-MY-SAVED-POST
 // @route   GET /api/v1/post/
 // @access  Private
@@ -261,3 +284,27 @@ export const getMyBlog = async (req, res) => {
     };
     return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, "", myBlog));
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const imagekit = new ImageKit({
+//     urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+//     publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+//     privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+// });
+// export const uploadAuth = async (req, res) => {
+//     const result = imagekit.getAuthenticationParameters();
+//     return res.json(result)
+// }
