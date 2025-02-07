@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify';
 import Label from '../components/Label';
-import { useApi } from '../helper/useApi';
-import ImageKit from '../utils/ImageKit.jsx';
+import { useApi } from '../helper/useApi.js';
+// import ImageKit from '../utils/ImageKit.jsx';
 
 function Forgotpass() {
     const [email, setEmail] = useState('');
@@ -27,7 +27,7 @@ function Forgotpass() {
                 <div className="bg-white shadow-lg mt-7 rounded-xl">
                     <div className="p-4 sm:p-7">
                         <div className="flex gap-2 flex-col items-center justify-center mb-4 text-2xl font-bold">
-                            <ImageKit src='logo.png' alt="logo" className="h-16 w-16" />
+                            {/* <ImageKit src='logo.png' alt="logo" className="h-16 w-16" /> */}
                             <span className="mt-2"> Blog Spark</span>
                             <h1 className="block text-lg font-bold text-gray-800">Forgot Password</h1>
                             <p className='text-[15px] text-center font-normal'>Enter your email and we'll send you a link to reset your password.</p>

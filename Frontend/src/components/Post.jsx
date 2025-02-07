@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-import ImageKit from "../utils/ImageKit.jsx";
+// import ImageKit from "../utils/ImageKit.jsx";
 import { format } from "timeago.js"
 
 const Post = ({post}) => {
@@ -8,7 +8,7 @@ const Post = ({post}) => {
   return (
       <div className="container mx-auto flex flex-col xl:flex-row mb-2 overflow-x-hidden">
         <div className="mt-2 lg:-mx-6 lg:flex lg:items-center">
-          {post?.img && <ImageKit src={post?.img}  className="object-cover w-full lg:mx-6 lg:w-1/3 rounded-xl h-52 lg:h-64" />}
+          {/* {post?.img && <ImageKit src={post?.img}  className="object-cover w-full lg:mx-6 lg:w-1/3 rounded-xl h-52 lg:h-64" />} */}
           <div className="mt-6 lg:w-1/2 lg:mt-0 lg:mx-6">
             {/* <p className="text-sm text-blue-500 uppercase">category</p> */}
             <Link to={`/${post?.slug}`} className="block mt-4 cursor-pointer text-2xl font-semibold text-gray-800 hover:underline dark:text-white">
@@ -35,7 +35,7 @@ const Post = ({post}) => {
                   className="object-cover object-center w-10 h-10 rounded-full"
                   src="https://images.unsplash.com/photo-1531590878845-12627191e687?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
                   alt="Author"/> : 
-                  <ImageKit className="object-cover object-center w-10 h-10 rounded-full" src={post.user?.img} />
+                  <img className="object-cover object-center w-10 h-10 rounded-full" src={post.user?.img} /> // imgkit
               }
             </div>
           </div>

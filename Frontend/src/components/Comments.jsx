@@ -33,9 +33,6 @@ function Comments({postId}) {
   });
 
 
-  // if (isPending) return <div className='flex gap-2 items-center justify-center'><p className='text-[23px] font-semibold'>Loading</p> <img src="https://img.icons8.com/?size=100&id=I2EAeOMEYXQj&format=png&color=000000" /> </div>;
-  // if(error) return error.message;
-  // console.log(data);
 
   const handleSubmit = (e) => {
     e.preventDefault();

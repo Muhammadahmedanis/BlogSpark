@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Label from '../components/Label';
 import { useApi } from '../helper/useApi';
-import ImageKit from '../utils/ImageKit';
+// import ImageKit from '../utils/ImageKit';
 
 const ResetPassword = () => {
     const { token } = useParams();
@@ -24,8 +24,6 @@ const ResetPassword = () => {
 
         try {
             await useApi("post", `/auth/change-password/${token}`, { oldPassword, newPassword });
-            // await axiosInstance.post(`/auth/change-password/${token}`, { oldPassword, newPassword })
-            // toast.success("Password reset successful");
         } catch (error) {
             toast.error(error.response?.data.message);
         }
@@ -45,10 +43,9 @@ const ResetPassword = () => {
                 <div className="bg-white     shadow-lg mt-7 rounded-xl">
                     <div className="p-4 sm:p-7">
                             <div className="flex flex-col items-center justify-center mb-4 text-2xl font-bold">
-                            <ImageKit src='logo.png' alt="logo" className="h-16 w-16" />
+                            {/* <ImageKit src='logo.png' alt="logo" className="h-16 w-16" /> */}
                             <span className="mt-2"> Blog Spark</span>
                             </div>
-                            {/* <h1 className="block text-lg font-bold text-center text-gray-800">Reset Password</h1> */}
                         <div className="">
                             <form action={submitAction}>
                                 <div className="grid gap-y-4">

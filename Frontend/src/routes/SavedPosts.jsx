@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useApi } from '../helper/useApi'; // Make sure this is correctly imported
+import { useApi } from '../helper/useApi.js'; // Make sure this is correctly imported
 import Post from "../components/Post.jsx"
 function SavedPosts() {
   const [savePost, setSavePost] = useState([]);

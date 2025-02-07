@@ -1,5 +1,5 @@
 import React from 'react'
-import ImageKit from '../utils/imageKit';
+// import ImageKit from '../utils/imageKit';
 import { format } from 'timeago.js'
 import { useSelector } from 'react-redux';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -25,7 +25,7 @@ function Comment({ comment, postId }) {
   return (
     <div className="p-4 bg-slate-50 rounded-xl mb-5">
         <div className="flex items-center gap-4">
-            <ImageKit src="default-image.jpg" className="w-10 h-10 rounded-full object-cover" width="40"/>
+            {/* <ImageKit src="default-image.jpg" className="w-10 h-10 rounded-full object-cover" width="40"/> */}
             <span className="font-medium">{comment?.user?.userName}</span>
             <span className="text-sm text-gray-500">{format(comment?.createdAt)}</span>
             {user && (comment?.user?.userName === user.name || user.role === "admin") && 

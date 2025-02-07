@@ -4,12 +4,12 @@ import { Link, NavLink } from "react-router-dom";
 import { MdOutlineDashboard, MdPublishedWithChanges } from "react-icons/md";
 import { FaBars, FaRegUser, FaRegEdit } from "react-icons/fa";
 import { SiSimplelogin } from "react-icons/si";
-import ImageKit from "../utils/ImageKit.jsx";
+// import ImageKit from "../utils/ImageKit.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { useApi } from "../helper/useApi";
 import { logout } from "../redux/userSlice";
 import { toast } from "react-toastify";
-import Upload from "./upload";
+// import Upload from "./upload";
 
 function Navbar() {
   const dispatch = useDispatch();
@@ -107,7 +107,7 @@ function Navbar() {
             {!isOpen && <FaBars onClick={() => setIsOpen(!isOpen)} />}
           </div>
           <div className="flex gap-2 items-center">
-            <ImageKit src="logo.png" alt="logo" className="h-[35px] w-[40px]" />
+            {/* <ImageKit src="logo.png" alt="logo" className="h-[35px] w-[40px]" /> */}
             <Link to="/" className="font-bold text-2xl">
               Blog <span className="text-gray-100">Spark</span>
             </Link>
@@ -157,7 +157,7 @@ function Navbar() {
               </button>
             </div>
               <div>
-              <Upload type="image" setData={setCover}>
+              {/* <Upload type="image" setData={setCover}>
                 { !cover?.url ? 
                   <ImageKit
                   className="w-[110px] h-[110px] mx-auto object-cover border border-gray-600 rounded-full"
@@ -170,7 +170,7 @@ function Navbar() {
                 />
               }
 
-              </Upload>
+              </Upload> */}
               </div>
               <div className="text-center">
                 <div className="flex justify-center items-center gap-1">
