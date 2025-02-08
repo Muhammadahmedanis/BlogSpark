@@ -53,7 +53,7 @@ function App() {
           <Route path='/change-password/:token' element={ <ResetPassword /> } />
           <Route path='*' element={ <NotFound /> } />
           
-          <Route path='/' element={ <ProtectedRoute> <Home /> </ProtectedRoute> } />
+          <Route path='/' element={ <Home /> } />
 
           <Route path='/allBlogs' element={ <PostList /> } />
           <Route path='/:slug' element={ <ProtectedRoute> <SinglePost /> </ProtectedRoute> } />

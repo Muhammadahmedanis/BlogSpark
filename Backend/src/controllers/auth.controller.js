@@ -56,9 +56,9 @@ export const signup = asyncHandler(async (req, res) => {
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(newUser._id);
     const options = {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        httpOnly: true, // Cookie can't be accessed via JavaScript
+        secure: true, // Only set to true in production (use HTTPS)
+        sameSite: 'none', // Ensure it works with cross-site cookies
     };
 
     return res
