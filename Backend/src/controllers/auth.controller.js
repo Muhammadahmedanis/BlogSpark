@@ -201,8 +201,9 @@ export const signin = asyncHandler(async (req, res) => {
     const loggedInusers = await  User.findById(user._id).select("-password, -refreshToken");
     
     const options = {
-        httpOnly: true,
-        secure: true,
+        httpOnly: true, // Cookie can't be accessed via JavaScript
+        secure: true, // Only set to true in production (use HTTPS)
+        sameSite: 'none', // Ensure it works with cross-site cookies
     }
     return res
     .status(StatusCodes.OK)
